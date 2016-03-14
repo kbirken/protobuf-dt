@@ -8,12 +8,17 @@
  */
 package com.google.eclipse.protobuf.scoping;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Collections.unmodifiableCollection;
-
 import static org.eclipse.xtext.util.Strings.isEmpty;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
-
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +32,12 @@ import com.google.eclipse.protobuf.model.util.INodes;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+
+// define our own @Nullable annotation
+@Target({ FIELD })
+@Retention(RUNTIME)
+@interface Nullable { }
+
 /**
  * Provider of <code>{@link ProtoDescriptor}</code>s.
  *
@@ -37,7 +48,7 @@ import com.google.inject.Singleton;
 
   @Inject private IParser parser;
   @Inject private INodes nodes;
-  @Inject private IExtensionRegistry registry;
+  @Inject @Nullable private IExtensionRegistry registry;
 
   private Map<String, URI> descriptorInfos;
   private Map<String, ProtoDescriptor> descriptors;
@@ -110,6 +121,10 @@ import com.google.inject.Singleton;
   }
 
   private ProtoDescriptorInfo descriptorInfoFromExtensionPoint() {
+	// registry will be null if not running in the Eclipse IDE
+	if (registry == null) {
+		return null;
+	}
     IConfigurationElement[] config = registry.getConfigurationElementsFor(EXTENSION_ID);
     if (config == null) {
       return null;
