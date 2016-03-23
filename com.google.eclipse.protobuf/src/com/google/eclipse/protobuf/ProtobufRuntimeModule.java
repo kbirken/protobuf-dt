@@ -43,6 +43,10 @@ public class ProtobufRuntimeModule extends AbstractProtobufRuntimeModule {
     return ProtobufImportUriResolver.class;
   }
 
+  @Override public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
+    return org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider.class;
+  }
+
   public Class<? extends IQualifiedNameConverter> bindIQualifiedNameConverter() {
     return ProtobufQualifiedNameConverter.class;
   }
