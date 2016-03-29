@@ -8,11 +8,20 @@
  */
 package com.google.eclipse.protobuf;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */
 public class ProtobufStandaloneSetup extends ProtobufStandaloneSetupGenerated {
-  public static void doSetup() {
-    new ProtobufStandaloneSetup().createInjectorAndDoEMFRegistration();
-  }
+
+	public static void doSetup() {
+		new ProtobufStandaloneSetup().createInjectorAndDoEMFRegistration();
+	}
+
+	@Override
+	public Injector createInjector() {
+		return Guice.createInjector(new com.google.eclipse.protobuf.ProtobufStandaloneRuntimeModule());
+	}
 }
