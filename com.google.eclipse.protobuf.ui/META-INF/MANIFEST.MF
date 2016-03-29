@@ -31,3 +31,4 @@ Export-Package: com.google.eclipse.protobuf.ui.contentassist,
  com.google.eclipse.protobuf.ui.preferences.compiler,
  com.google.eclipse.protobuf.ui.util,
  com.google.eclipse.protobuf.ui.quickfix
+Import-Package: org.apache.log4j
