@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
+
 import com.google.eclipse.protobuf.protobuf.Import;
 
 /**
@@ -66,7 +68,8 @@ public class StandaloneFileUriResolver implements IFileUriResolver {
 		File f = new File(candidate);
 		if (f.exists()) {
 			// we found a file with this checkPath, update import element
-			anImport.setImportURI(candidate);
+			URI uri = URI.createFileURI(candidate);
+			anImport.setImportURI(uri.toString());
 			return true;
 		}
 		return false;
