@@ -115,8 +115,9 @@ import com.google.inject.Singleton;
     }
   }
 
-  private static ProtoDescriptorInfo defaultDescriptorInfo() {
+  protected ProtoDescriptorInfo defaultDescriptorInfo() {
     URI location = URI.createURI("platform:/plugin/com.google.eclipse.protobuf/descriptor.proto");
+//    URI location = URI.createURI("file:/Users/birken/Documents/pgm/protobuf-dt/github_kbirken/com.google.eclipse.protobuf/descriptor.proto");
     return new ProtoDescriptorInfo("google/protobuf/descriptor.proto", location);
   }
 
@@ -168,7 +169,7 @@ import com.google.inject.Singleton;
     descriptorInfos.put(primaryImportUri, descriptorInfo.location);
   }
 
-  private static class ProtoDescriptorInfo {
+  protected static class ProtoDescriptorInfo {
     final String importUri;
     final URI location;
 

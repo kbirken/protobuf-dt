@@ -76,6 +76,8 @@ public class ProtoDescriptor {
       resolveLazyCrossReferences(resource, NullImpl);
       initContents();
     } catch (Throwable t) {
+      System.err.println("Error loading '" + importUri + "', unable to parse descriptor.proto.");
+      t.printStackTrace();
       throw new IllegalStateException("Unable to parse descriptor.proto", t);
     } finally {
       closeQuietly(reader);

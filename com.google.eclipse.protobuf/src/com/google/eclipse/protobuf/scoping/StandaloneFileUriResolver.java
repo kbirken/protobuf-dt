@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
 
+import com.google.eclipse.protobuf.model.util.Imports;
 import com.google.eclipse.protobuf.protobuf.Import;
+import com.google.inject.Inject;
 
 /**
  * Resolve import-statements of protobuf in a standalone environment.<p/>
@@ -27,6 +29,9 @@ import com.google.eclipse.protobuf.protobuf.Import;
  */
 public class StandaloneFileUriResolver implements IFileUriResolver {
 
+	@Inject private ProtoDescriptorProvider descriptorProvider;
+	@Inject private Imports imports;
+
 	private static List<String> searchPaths = new ArrayList<String>();
 	
 	public static void clearSearchPaths() {
@@ -39,6 +44,10 @@ public class StandaloneFileUriResolver implements IFileUriResolver {
 	
 	@Override
 	public void resolveAndUpdateUri(Import anImport) {
+		if (imports.isResolved(anImport)) {
+			return;
+		}
+
 		// check if imported file is an absolute path
 		String orig = anImport.getImportURI();
 		if (new File(orig).isAbsolute()) {
