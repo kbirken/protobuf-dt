@@ -8,19 +8,16 @@
  */
 package com.google.eclipse.protobuf.ui.commands.semicolon;
 
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-
-import static org.eclipse.xtext.nodemodel.util.NodeModelUtils.getNode;
-import static org.eclipse.xtext.util.Strings.isEmpty;
-import static org.eclipse.xtext.util.Tuples.pair;
-
 import static com.google.common.cache.CacheBuilder.newBuilder;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.eclipse.protobuf.util.Strings.quote;
 import static com.google.eclipse.protobuf.util.SystemProperties.lineSeparator;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static org.eclipse.xtext.nodemodel.util.NodeModelUtils.getNode;
+import static org.eclipse.xtext.util.Strings.isEmpty;
+import static org.eclipse.xtext.util.Tuples.pair;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,8 +74,10 @@ import com.google.inject.Singleton;
     for (final String s : patterns) {
       Pattern p = null;
       try {
-        p = patternCache.get(s);
-      } catch (ExecutionException e) {
+        p = patternCache.getIfPresent(s);
+        if (p==null)
+        	p = PatternCacheLoader.compile(s);
+      } catch (Exception e) {
         logger.error("Unable to obtain pattern from cache for " + quote(s), e);
         p = PatternCacheLoader.compile(s);
       }
