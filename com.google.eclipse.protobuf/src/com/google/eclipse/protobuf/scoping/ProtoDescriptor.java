@@ -68,6 +68,7 @@ public class ProtoDescriptor {
     addOptionTypes();
     InputStreamReader reader = null;
     try {
+//      System.out.println("Loading descriptor.proto from " + location);
       resource = new XtextResource(location);
       reader = new InputStreamReader(contents(location), UTF_8);
       IParseResult result = parser.parse(reader);
