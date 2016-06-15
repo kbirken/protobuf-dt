@@ -48,6 +48,12 @@ public class StandaloneFileUriResolver implements IFileUriResolver {
 			return;
 		}
 
+	    URI location = descriptorProvider.descriptorLocation(anImport.getImportURI());
+	    if (location != null) {
+			anImport.setImportURI(location.toString());
+			return;
+	    }
+
 		// check if imported file is an absolute path
 		String orig = anImport.getImportURI();
 		if (new File(orig).isAbsolute()) {

@@ -4,6 +4,9 @@ import java.net.URL;
 
 import org.eclipse.emf.common.util.URI;
 
+import com.google.inject.Singleton;
+
+@Singleton
 public class StandaloneProtoDescriptorProvider extends ProtoDescriptorProvider {
 
 	/**
@@ -16,8 +19,11 @@ public class StandaloneProtoDescriptorProvider extends ProtoDescriptorProvider {
 	@Override
 	protected ProtoDescriptorInfo defaultDescriptorInfo() {
 		URL url = getClass().getClassLoader().getResource("descriptor.proto");
-		URI location = URI.createFileURI(url.getFile());
-		return new ProtoDescriptorInfo("google/protobuf/descriptor.proto", location);
+		//System.out.println("URL      : " + url);
+
+		URI location = URI.createURI(url.toString());
+		//System.out.println("URI      : " + location);
+		return new ProtoDescriptorInfo(ProtoDescriptorProvider.PROTO_DESCRIPTOR_URI, location);
 	}
 
 }

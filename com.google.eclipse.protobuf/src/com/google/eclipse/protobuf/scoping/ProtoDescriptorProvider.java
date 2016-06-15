@@ -44,6 +44,8 @@ import com.google.inject.Singleton;
  * @author Alex Ruiz
  */
 @Singleton public class ProtoDescriptorProvider {
+  public static final String PROTO_DESCRIPTOR_URI = "google/protobuf/descriptor.proto";
+  
   private static final String EXTENSION_ID = "com.google.eclipse.protobuf.descriptorSource";
 
   @Inject private IParser parser;
@@ -117,8 +119,7 @@ import com.google.inject.Singleton;
 
   protected ProtoDescriptorInfo defaultDescriptorInfo() {
     URI location = URI.createURI("platform:/plugin/com.google.eclipse.protobuf/descriptor.proto");
-//    URI location = URI.createURI("file:/Users/birken/Documents/pgm/protobuf-dt/github_kbirken/com.google.eclipse.protobuf/descriptor.proto");
-    return new ProtoDescriptorInfo("google/protobuf/descriptor.proto", location);
+    return new ProtoDescriptorInfo(PROTO_DESCRIPTOR_URI, location);
   }
 
   private ProtoDescriptorInfo descriptorInfoFromExtensionPoint() {
