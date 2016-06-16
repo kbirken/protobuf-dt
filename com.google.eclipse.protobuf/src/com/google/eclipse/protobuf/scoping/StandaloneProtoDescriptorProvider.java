@@ -19,14 +19,15 @@ public class StandaloneProtoDescriptorProvider extends ProtoDescriptorProvider {
 	@Override
 	protected ProtoDescriptorInfo defaultDescriptorInfo() {
 		URL url = getClass().getClassLoader().getResource("descriptor.proto");
-		System.out.println("StandaloneProtoDescriptorProvider - URL      : " + url);
+		String urlString = url.toString();
+		System.out.println("StandaloneProtoDescriptorProvider - URL      : " + urlString);
 		
-		URI location = URI.createURI(url.toString());
-		if (! url.equals(location))
-			System.out.println("StandaloneProtoDescriptorProvider - URI      : " + location);
+		URI location = URI.createURI(urlString);
+		if (! urlString.equals(location.toString()))
+			System.out.println("StandaloneProtoDescriptorProvider - URI      : " + location.toString());
 
 		String extForm = url.toExternalForm();
-		if (! url.equals(extForm))
+		if (! urlString.equals(extForm))
 			System.out.println("StandaloneProtoDescriptorProvider - ext form : " + extForm);
 
 		return new ProtoDescriptorInfo(ProtoDescriptorProvider.PROTO_DESCRIPTOR_URI, location);
