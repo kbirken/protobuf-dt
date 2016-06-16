@@ -22,9 +22,12 @@ public class StandaloneProtoDescriptorProvider extends ProtoDescriptorProvider {
 		System.out.println("StandaloneProtoDescriptorProvider - URL      : " + url);
 		
 		URI location = URI.createURI(url.toString());
-		System.out.println("StandaloneProtoDescriptorProvider - URI      : " + location);
+		if (! url.equals(location))
+			System.out.println("StandaloneProtoDescriptorProvider - URI      : " + location);
 
-		System.out.println("StandaloneProtoDescriptorProvider - ext form : " + url.toExternalForm());
+		String extForm = url.toExternalForm();
+		if (! url.equals(extForm))
+			System.out.println("StandaloneProtoDescriptorProvider - ext form : " + extForm);
 
 		return new ProtoDescriptorInfo(ProtoDescriptorProvider.PROTO_DESCRIPTOR_URI, location);
 	}
