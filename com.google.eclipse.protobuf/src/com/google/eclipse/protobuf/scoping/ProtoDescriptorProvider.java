@@ -9,14 +9,11 @@
 package com.google.eclipse.protobuf.scoping;
 
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Collections.unmodifiableCollection;
 import static org.eclipse.xtext.util.Strings.isEmpty;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Collection;
@@ -26,7 +23,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.eclipse.protobuf.model.util.INodes;
 import com.google.inject.Inject;
@@ -48,7 +45,7 @@ import com.google.inject.Singleton;
   
   private static final String EXTENSION_ID = "com.google.eclipse.protobuf.descriptorSource";
 
-  @Inject private IParser parser;
+  @Inject private XtextResourceSet resourceSet;
   @Inject private INodes nodes;
   @Inject @Nullable private IExtensionRegistry registry;
 
@@ -86,7 +83,7 @@ import com.google.inject.Singleton;
         ensureProtoDescriptorInfosAreCreated();
         for (Entry<String, URI> entry : descriptorInfos.entrySet()) {
           String importUri = entry.getKey();
-          ProtoDescriptor descriptor = new ProtoDescriptor(importUri, entry.getValue(), parser, nodes);
+          ProtoDescriptor descriptor = new ProtoDescriptor(importUri, entry.getValue(), resourceSet, nodes);
           descriptors.put(importUri, descriptor);
         }
       }

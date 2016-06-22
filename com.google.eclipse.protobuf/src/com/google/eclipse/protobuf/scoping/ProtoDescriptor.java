@@ -14,25 +14,36 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.eclipse.protobuf.protobuf.ProtobufPackage.Literals.MESSAGE_FIELD__TYPE;
 import static com.google.eclipse.protobuf.scoping.OptionType.findOptionTypeForLevelOf;
-import static com.google.eclipse.protobuf.util.Encodings.UTF_8;
-import static java.util.Collections.*;
-import static org.eclipse.xtext.EcoreUtil2.*;
-import static org.eclipse.xtext.util.CancelIndicator.NullImpl;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableList;
+import static org.eclipse.xtext.EcoreUtil2.getAllContentsOfType;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.eclipse.protobuf.model.util.INodes;
-import com.google.eclipse.protobuf.protobuf.*;
-import com.google.eclipse.protobuf.protobuf.Enum;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.eclipse.protobuf.model.util.INodes;
+import com.google.eclipse.protobuf.protobuf.ComplexType;
+import com.google.eclipse.protobuf.protobuf.Enum;
+import com.google.eclipse.protobuf.protobuf.Message;
+import com.google.eclipse.protobuf.protobuf.MessageElement;
+import com.google.eclipse.protobuf.protobuf.MessageField;
+import com.google.eclipse.protobuf.protobuf.NativeOption;
+import com.google.eclipse.protobuf.protobuf.Protobuf;
 
 /**
  * Contains the elements from descriptor.proto (provided with protobuf's library.)
@@ -62,19 +73,20 @@ public class ProtoDescriptor {
   private final INodes nodes;
   private final XtextResource resource;
 
-  ProtoDescriptor(String importUri, URI location, IParser parser, INodes nodes) {
+  ProtoDescriptor(String importUri, URI location, XtextResourceSet resourceSet, INodes nodes) {
     this.importUri = importUri;
     this.nodes = nodes;
     addOptionTypes();
     InputStreamReader reader = null;
     try {
 //      System.out.println("Loading descriptor.proto from " + location);
-      resource = new XtextResource(location);
-      reader = new InputStreamReader(contents(location), UTF_8);
-      IParseResult result = parser.parse(reader);
-      root = (Protobuf) result.getRootASTElement();
-      resource.getContents().add(root);
-      resolveLazyCrossReferences(resource, NullImpl);
+      resource = (XtextResource)resourceSet.createResource(location);
+      Map<String, Object> options = new HashMap<String, Object>();
+      resource.setURI(location);
+      options.put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+      resource.load(contents(location), options);
+//      resource.resolveLazyCrossReferences(null);
+      root = (Protobuf)resource.getContents().get(0);
       initContents();
     } catch (Throwable t) {
       System.err.println("Error loading '" + importUri + "', unable to parse descriptor.proto.");
