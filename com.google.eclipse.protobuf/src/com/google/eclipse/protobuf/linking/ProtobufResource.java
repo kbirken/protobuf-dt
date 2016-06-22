@@ -34,7 +34,7 @@ public class ProtobufResource extends LazyLinkingResource {
   }
 
   @Override protected void doLoad(InputStream inputStream, Map<?, ?> options) throws IOException {
-    if (resourceVerifier.shouldIgnore(uri)) {
+    if (resourceVerifier!=null && resourceVerifier.shouldIgnore(uri)) {
       return;
     }
     super.doLoad(inputStream, options);
