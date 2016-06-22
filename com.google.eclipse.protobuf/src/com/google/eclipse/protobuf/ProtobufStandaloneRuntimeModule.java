@@ -8,6 +8,9 @@
  */
 package com.google.eclipse.protobuf;
 
+import org.eclipse.xtext.parser.EclipseProjectPropertiesEncodingProvider;
+import org.eclipse.xtext.parser.IEncodingProvider;
+
 import com.google.eclipse.protobuf.scoping.IFileUriResolver;
 import com.google.eclipse.protobuf.scoping.ProtoDescriptorProvider;
 import com.google.eclipse.protobuf.scoping.StandaloneFileUriResolver;
@@ -38,4 +41,9 @@ public class ProtobufStandaloneRuntimeModule extends ProtobufRuntimeModule {
 	public Class<? extends ProtoDescriptorProvider> bindProtoDescriptorProvider() {
 		return StandaloneProtoDescriptorProvider.class;
 	}
+	
+	public Class<? extends IEncodingProvider.Runtime> bindRuntimeEncodingProvider() {
+		return IEncodingProvider.Runtime.class;
+	}
+
 }
