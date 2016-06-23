@@ -19,6 +19,8 @@ import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableList;
 import static org.eclipse.xtext.EcoreUtil2.getAllContentsOfType;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,6 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -51,6 +55,8 @@ import com.google.eclipse.protobuf.protobuf.Protobuf;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class ProtoDescriptor {
+  static final Logger logger = Logger.getLogger(ProtoDescriptor.class);
+
   private static final Map<String, OptionType> OPTION_DEFINITION_BY_NAME = newHashMap();
 
   static {
@@ -77,23 +83,33 @@ public class ProtoDescriptor {
     this.importUri = importUri;
     this.nodes = nodes;
     addOptionTypes();
-    InputStreamReader reader = null;
+//    InputStreamReader reader = null;
     try {
-//      System.out.println("Loading descriptor.proto from " + location);
-      resource = (XtextResource)resourceSet.createResource(location);
+      //
+      logger.info("Loading descriptor.proto from " + location);
+      resource = (XtextResource) resourceSet.createResource(URI.createURI(importUri));
+      if (resource == null) {
+        logger.error("ProtoDescriptor cannot create resource '" + location + "' (no factory registered?).");
+        return;
+      }
+      
+      // prepare options for resource loading
       Map<String, Object> options = new HashMap<String, Object>();
-      resource.setURI(location);
       options.put(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-      resource.load(contents(location), options);
-//      resource.resolveLazyCrossReferences(null);
+      
+      // create input stream and load resource
+      InputStream is = contents(location);
+      resource.load(is, options);
+      
+      // do housekeeping
       root = (Protobuf)resource.getContents().get(0);
       initContents();
     } catch (Throwable t) {
-      System.err.println("Error loading '" + importUri + "', unable to parse descriptor.proto.");
+      logger.error("Error loading '" + importUri + "', unable to parse descriptor.proto.");
       t.printStackTrace();
       throw new IllegalStateException("Unable to parse descriptor.proto", t);
     } finally {
-      closeQuietly(reader);
+//      closeQuietly(reader);
     }
   }
 
@@ -104,8 +120,17 @@ public class ProtoDescriptor {
    * @throws IOException if something goes wrong.
    */
   protected InputStream contents(URI descriptorLocation) throws IOException {
-    URL url = new URL(descriptorLocation.toString());
-    return url.openConnection().getInputStream();
+	InputStream is = null;
+//	if (descriptorLocation.isPlatform()) {
+		// we are running in the IDE
+		URL url = new URL(descriptorLocation.toString());
+		is = url.openConnection().getInputStream();
+//	} else {
+//		// we are running standalone
+//		String loc = descriptorLocation.toString();
+//		is = getClass().getResourceAsStream("/" + loc);
+//	}
+	return is;
   }
 
   private void addOptionTypes() {
