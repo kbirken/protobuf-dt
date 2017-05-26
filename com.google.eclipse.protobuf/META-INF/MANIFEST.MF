@@ -17,7 +17,7 @@ Require-Bundle: org.antlr.runtime,
  org.eclipse.emf.mwe2.launch;bundle-version="2.7.1",
  org.eclipse.emf.ecore,
  org.eclipse.emf.common
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: com.google.eclipse.protobuf,
  com.google.eclipse.protobuf.conversion,
  com.google.eclipse.protobuf.formatting,
